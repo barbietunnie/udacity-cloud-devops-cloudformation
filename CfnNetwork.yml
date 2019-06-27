@@ -1,9 +1,24 @@
 Description: >
-  Babatunde Adeyemi
-  This template deploys a VPC
+    Babatunde Adeyemi
+    This template deploys a VPC, witha pair of private and public subnets across two Availability Zones.
+    It deploys an Internet gateway with route on the public subnets. It deploys a pair of NAT gateways, 
+    with default routes for them in the private subnets.
+Parameters:
+    EnvironmentName:
+        Description: An Environment name that will be prefixed to resources
+        Type: String
+
+    VpcCIDR:
+        Description: Please enter the IP range (CIDR notation) for this
+        Type: String
+        Default: 10.0.0.0/16
 Resources:
-  B8LabsVPC:
-    Type: AWS::EC2::VPC
-    Properties:
-      CidrBlock: 10.0.0.0/16
-      EnableDnsHostnames: true
+    B8LabsVPC:
+        Type: AWS::EC2::VPC
+        Properties:
+          CidrBlock: !Ref VpcCIDR
+          EnableDnsHostnames: true
+          Tags:
+            - Key: Name
+              Value: !Ref EnvironmentName
+
