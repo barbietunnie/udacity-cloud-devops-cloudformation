@@ -13,5 +13,5 @@ The deployment will be carried out in such a way that the networking components 
 - Create the network stack
 
 ```
-    $ ./scripts/create-stack.sh DemoInfra  CfnNetwork.yml data/network-parameters.json
+    $ ./scripts/create-stack.sh CfnBase CfnNetwork.yml data/network-parameters.json
 ```

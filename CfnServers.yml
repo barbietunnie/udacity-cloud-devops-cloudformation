@@ -5,6 +5,10 @@ Parameters:
   EnvironmentName:
     Description: An Environment name that will be prefixed to resources
     Type: String
+  KeyName:
+    Description: EC2 Instance SSH key
+    Type: AWS::EC2::KeyPair::KeyName
+
 Resources:
   LoadBalancerSecGroup:
     Type: AWS::EC2::SecurityGroup
@@ -71,6 +75,7 @@ Resources:
         - Ref: WebServerSecGroup
       InstanceType: t2.micro
       ImageId: ami-005bdb005fb00e791
+      KeyName: !Ref KeyName
       BlockDeviceMappings:
         - DeviceName: "/dev/sdk"
           Ebs:
@@ -91,8 +96,8 @@ Resources:
         # - Fn::ImportValue: !Sub "${EnvironmentName}-PRIV-NETS"
         - Fn::ImportValue: !Sub "${EnvironmentName}-PUB-NETS"
       LaunchConfigurationName: !Ref WebAppLaunchConfig
-      MinSize: '2'
-      MaxSize: '4'
+      MinSize: '1'
+      MaxSize: '2'
       TargetGroupARNs: [ !Ref WebAppTargetGroup ]
 
 
