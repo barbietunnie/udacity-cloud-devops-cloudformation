@@ -1,5 +1,5 @@
 Description: >
-  Babatunde Adeyemi
+  Babatunde Adeyemi / Udacity Cloud Devops 2019 - 
   This template deploys a VPC, witha pair of private and public subnets across two Availability Zones.
   It deploys an Internet gateway with route on the public subnets. It deploys a pair of NAT gateways, 
   with default routes for them in the private subnets.
