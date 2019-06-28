@@ -35,8 +35,8 @@ Resources:
           !Sub "${EnvironmentName}-VPC-ID"
       SecurityGroupIngress:
         - IpProtocol: tcp
-          FromPort: 8080
-          ToPort: 8080
+          FromPort: 80
+          ToPort: 80
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           FromPort: 22
@@ -50,3 +50,37 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName} Web Servers Security Group
+
+  WebAppLaunchConfig:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          # Install Apache 2
+          apt-get update -y
+          apt-get install unzip awscli -y
+          apt-get install apache2 -y
+          systemctl start apache2.service
+          # cd /var/www/html
+          # aws s3 cp s3://udacity-demo-1/udacity.zip .
+          # unzip -o udacity.zip
+      # KeyName: your-key-name
+      SecurityGroups:
+        - Ref: WebServerSecGroup
+      InstanceType: t2.micro
+      ImageId: ami-005bdb005fb00e791
+      BlockDeviceMappings:
+        - DeviceName: "/dev/sdk"
+          Ebs:
+            VolumeSize: '10'
+  WebAppGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      VPCZoneIdentifier:
+        - Fn::ImportValue: !Sub "${EnvironmentName}-PRIV-NETS"
+      LaunchConfigurationName: !Ref WebAppLaunchConfig
+      MinSize: '2'
+      MaxSize: '4'
+      # TargetGroupARNs: !Ref WebAppTargetGroup
+

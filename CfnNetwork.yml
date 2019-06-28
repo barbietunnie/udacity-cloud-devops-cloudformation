@@ -217,13 +217,13 @@ Outputs:
     Description: Private Routing AZ1
     Value: !Ref PrivateRouteTable1
     Export:
-      Name: !Sub ${EnvironmentName}-PRI1-RT
+      Name: !Sub ${EnvironmentName}-PRIV1-RT
 
   VPCPrivateRouteTable2:
     Description: Private Routing AZ2
     Value: !Ref PrivateRouteTable2
     Export:
-      Name: !Sub ${EnvironmentName}-PRI2-RT
+      Name: !Sub ${EnvironmentName}-PRIV2-RT
 
   PublicSubnets:
     Description: A list of public subnets
@@ -235,7 +235,7 @@ Outputs:
     Description: A list of private subnets
     Value: !Join [",", [ !Ref PrivateSubnet1, !Ref PrivateSubnet2 ]]
     Export:
-      Name: !Sub ${EnvironmentName}-PRI-NETS
+      Name: !Sub ${EnvironmentName}-PRIV-NETS
 
   PublicSubnet1:
     Description: A reference to the public subnet in the 1st Availability Zone
@@ -253,13 +253,13 @@ Outputs:
     Description: A reference to the private subnet in the 1st Availability Zone
     Value: !Ref PrivateSubnet1
     Export:
-      Name: !Sub ${EnvironmentName}-PRI1-SN
+      Name: !Sub ${EnvironmentName}-PRIV1-SN
 
   PrivateSubnet2:
     Description: A reference to the private subnet in the 2nd Availability Zone
     Value: !Ref PrivateSubnet2
     Export:
-      Name: !Sub ${EnvironmentName}-PRI2-SN
+      Name: !Sub ${EnvironmentName}-PRIV2-SN
       
       
 
