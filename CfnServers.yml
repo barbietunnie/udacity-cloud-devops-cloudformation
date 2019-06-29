@@ -9,6 +9,16 @@ Parameters:
     Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
     Type: AWS::EC2::KeyPair::KeyName
     ConstraintDescription: must be the name of an existing EC2 KeyPair
+  S3CodeBucketName:
+    Description: >- 
+      The name of the S3 bucket containing the zipped application code 
+      to be deployed
+    Type: String
+    AllowedPattern: ^[0-9a-zA-Z][0-9a-zA-Z-]*$
+  S3CodeArchive:
+    Description: The application code archive (must end with .zip)
+    Type: String
+    AllowedPattern: ^.*\.zip$
 
 Resources:
   LoadBalancerSecGroup:
@@ -61,21 +71,23 @@ Resources:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
       UserData:
-        Fn::Base64: |
+        Fn::Base64: !Sub |
           #!/bin/bash
           # Install Apache 2
           apt-get update -y
           apt-get install unzip awscli -y
           apt-get install apache2 -y
           systemctl start apache2.service
-          # cd /var/www/html
-          # aws s3 cp s3://udacity-demo-1/udacity.zip .
-          # unzip -o udacity.zip
-      # KeyName: your-key-name
+          cd /var/www/html
+          # Copy the web application archive
+          aws s3 cp s3://${S3CodeBucketName}/${S3CodeArchive} .
+          # unzip the archive
+          unzip -o ${S3CodeArchive}
       SecurityGroups:
         - Ref: WebServerSecGroup
-      InstanceType: t2.micro
+      InstanceType: t2.medium
       ImageId: ami-005bdb005fb00e791
+      IamInstanceProfile: !Ref RootInstanceProfile
       KeyName: !Ref KeyName
       BlockDeviceMappings:
         - DeviceName: "/dev/sdk"
@@ -84,20 +96,12 @@ Resources:
   
   WebAppGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
-    # UpdatePolicy:
-    #   AutoScalingReplacingUpdate:
-    #     WillReplace: true
-    #   AutoScalingRollingUpdate:
-    #     MinInstancesInService: 1
-    # CreationPolicy:
-    #   ResourceSignal:
-    #     Count: 2
     Properties:
       VPCZoneIdentifier:
         # - Fn::ImportValue: !Sub "${EnvironmentName}-PRIV-NETS"
         - Fn::ImportValue: !Sub "${EnvironmentName}-PUB-NETS"
       LaunchConfigurationName: !Ref WebAppLaunchConfig
-      MinSize: '1'
+      MinSize: '2'
       MaxSize: '2'
       TargetGroupARNs: [ !Ref WebAppTargetGroup ]
 
@@ -142,7 +146,7 @@ Resources:
       HealthyThresholdCount: 2
       Port: 80
       Protocol: HTTP
-      UnhealthyThresholdCount: 5
+      UnhealthyThresholdCount: 3
       VpcId: 
         Fn::ImportValue:
           !Sub "${EnvironmentName}-VPC-ID"
@@ -175,12 +179,15 @@ Resources:
         Statement: 
           - Effect: Allow
             Action:
-              - s3:ListBucket
               - s3:GetObject
             Resource: "*"
       Roles: 
         - !Ref S3CodeBucketCopyRole
 
+Outputs:
+  WALB:
+    Description: The URL of the web application load balancer
+    Value: !Join [ "", [ "http://", !GetAtt WebAppLB.DNSName ] ]
 
 
 

@@ -8,10 +8,18 @@ It contains `Cloudformation templates` that will create and deploy the infrastru
 
 The deployment will be carried out in such a way that the networking components followed by servers, security roles and software are deployed in that order.
 
-## Examples
+## Running
 
-- Create the network stack
+1. Update the parameters in the files present in the `data/` directory to suit your purpose.
 
-```
-    $ ./scripts/create-stack.sh CfnBase CfnNetwork.yml data/network-parameters.json
-```
+2. Create the network stack
+
+    ```
+        $ ./scripts/create-stack.sh CfnBase CfnNetwork.yml data/network-parameters.json
+    ```
+
+3. Create the servers stack
+
+    ```
+        $ ./scripts/create-stack.sh CfnServers CfnServers.yml data/servers-parameters.json
+    ```
