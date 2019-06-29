@@ -5,10 +5,6 @@ Parameters:
   EnvironmentName:
     Description: An Environment name that will be prefixed to resources
     Type: String
-  KeyName:
-    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
-    Type: AWS::EC2::KeyPair::KeyName
-    ConstraintDescription: must be the name of an existing EC2 KeyPair
   S3CodeBucketName:
     Description: >- 
       The name of the S3 bucket containing the zipped application code 
@@ -54,10 +50,6 @@ Resources:
           FromPort: 80
           ToPort: 80
           CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: 0.0.0.0/0
       SecurityGroupEgress:
         - IpProtocol: tcp
           FromPort: 0
@@ -88,7 +80,6 @@ Resources:
       InstanceType: t2.medium
       ImageId: ami-005bdb005fb00e791
       IamInstanceProfile: !Ref RootInstanceProfile
-      KeyName: !Ref KeyName
       BlockDeviceMappings:
         - DeviceName: "/dev/sdk"
           Ebs:
@@ -98,8 +89,8 @@ Resources:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
       VPCZoneIdentifier:
-        # - Fn::ImportValue: !Sub "${EnvironmentName}-PRIV-NETS"
-        - Fn::ImportValue: !Sub "${EnvironmentName}-PUB-NETS"
+        - Fn::ImportValue: !Sub "${EnvironmentName}-PRIV-NETS"
+        # - Fn::ImportValue: !Sub "${EnvironmentName}-PUB-NETS"
       LaunchConfigurationName: !Ref WebAppLaunchConfig
       MinSize: '2'
       MaxSize: '2'

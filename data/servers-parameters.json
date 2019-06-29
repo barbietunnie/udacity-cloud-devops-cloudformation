@@ -4,10 +4,6 @@
         "ParameterValue": "UdacityDevopsProject"
     },
     {
-        "ParameterKey": "KeyName",
-        "ParameterValue": "Udacity"
-    },
-    {
         "ParameterKey": "S3CodeBucketName",
         "ParameterValue": "udacity-cloud-devops-project-2"
     } ,
