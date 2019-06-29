@@ -6,8 +6,9 @@ Parameters:
     Description: An Environment name that will be prefixed to resources
     Type: String
   KeyName:
-    Description: EC2 Instance SSH key
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
     Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: must be the name of an existing EC2 KeyPair
 
 Resources:
   LoadBalancerSecGroup:
@@ -145,6 +146,41 @@ Resources:
       VpcId: 
         Fn::ImportValue:
           !Sub "${EnvironmentName}-VPC-ID"
+
+  S3CodeBucketCopyRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+
+  RootInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+        - !Ref S3CodeBucketCopyRole
+
+  S3CodeBucketCopyPolicy:
+    Type: AWS::IAM::Policy
+    Properties: 
+      PolicyName: S3CodeBucketCopyPolicy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement: 
+          - Effect: Allow
+            Action:
+              - s3:ListBucket
+              - s3:GetObject
+            Resource: "*"
+      Roles: 
+        - !Ref S3CodeBucketCopyRole
+
 
 
 
