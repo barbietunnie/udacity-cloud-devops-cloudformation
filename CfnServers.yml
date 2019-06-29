@@ -77,7 +77,7 @@ Resources:
           unzip -o ${S3CodeArchive}
       SecurityGroups:
         - Ref: WebServerSecGroup
-      InstanceType: t2.medium
+      InstanceType: t3.medium
       ImageId: ami-005bdb005fb00e791
       IamInstanceProfile: !Ref RootInstanceProfile
       BlockDeviceMappings:
