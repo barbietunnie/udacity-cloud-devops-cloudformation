@@ -8,6 +8,16 @@ It contains `Cloudformation templates` that will create and deploy the infrastru
 
 The deployment will be carried out in such a way that the networking components followed by servers, security roles and software are deployed in that order.
 
+## Template Designer Diagrams
+
+### Network Architecture
+
+![Network template](cfn-network-template-designer.png)
+
+
+### Servers Architecture
+![Servers template](cfn-servers-template-designer.png)
+
 ## Running
 
 1. Update the parameters in the files present in the `data/` directory to suit your purpose.
